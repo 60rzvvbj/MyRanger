@@ -1,0 +1,130 @@
+* {
+	padding: 0;
+	margin: 0;
+	font-family: Consolas, 'Courier New', monospace;
+}
+
+input {
+	outline: none;
+}
+
+a {
+	text-decoration: none;
+	color: #000;
+}
+
+li {
+	list-style: none;
+}
+
+body {
+	background-color: #15231b;
+}
+
+.header {
+	width: 100vw;
+	height: 4vh;
+	overflow: hidden;
+}
+
+.header>div {
+	float: left;
+	font-size: 22px;
+	line-height: 4vh;
+}
+
+.header .user {
+	text-indent: 1em;
+	color: #e3b4b8;
+}
+
+.header .path {
+	text-indent: 1em;
+	color: #5096cd;
+}
+
+.header .now {
+	color: #a87db8;
+}
+
+.main {
+	width: 100vw;
+	height: 92vh;
+}
+
+.main>ul {
+	overflow: hidden;
+}
+
+.main>ul li {
+	width: 100%;
+	height: 24px;
+	font-size: 20px;
+	line-height: 24px;
+	text-indent: 1em;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.main>ul .folder {
+	color: #5096cd;
+}
+
+.main>ul .exe {
+	color: #e3b4b8;
+}
+
+.main>ul .file {
+	color: #8abcd1;
+}
+
+.main>ul .light {
+	color: #eee;
+	background-color: #095aa1;
+}
+
+.main .left {
+	float: left;
+	width: 18vw;
+	height: 100%;
+	padding-left: 20px;
+	padding-right: 20px;
+	box-sizing: border-box;
+}
+
+.main .middle {
+	float: left;
+	width: 32vw;
+	height: 100%;
+	padding-right: 20px;
+	box-sizing: border-box;
+}
+
+.main .right {
+	float: left;
+	width: 50vw;
+	height: 100%;
+	padding-right: 20px;
+	box-sizing: border-box;
+}
+
+.main .right .content {
+	font-size: 20px;
+	line-height: 24px;
+	white-space: pre-wrap;
+	color: #8abcd1;
+}
+
+.footer {
+	width: 100vw;
+	height: 4vh;
+}
+
+.footer .number {
+	float: right;
+	padding-right: 20px;
+	font-size: 22px;
+	line-height: 4vh;
+	color: #8abcd1;
+}
