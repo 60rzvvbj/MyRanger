@@ -22,6 +22,9 @@ let mainRight = getDom('.main .right');
 
 let footerNumber = getDom('.footer .number');
 
+/**
+ * 加载文件夹
+ */
 function loadfolder() {
 	headerPath.innerText = nowPath;
 	if (nowPath.length != 3) {
@@ -32,7 +35,8 @@ function loadfolder() {
 	if (nowPath != path.join(nowPath, '..')) {
 		let {
 			fileList,
-			lightIndex
+			lightIndex,
+			scroll
 		} = getfileList(path.join(nowPath, '..'));
 		for (let i = 0; i < fileList.length; i++) {
 			let file = fileList[i];
@@ -47,6 +51,8 @@ function loadfolder() {
 
 			mainLeft.appendChild(li);
 		}
+		mainLeft.scrollTo(0, scroll);
+
 	};
 
 	nowFileList = getfileList(path.join(nowPath));
@@ -81,6 +87,9 @@ function loadfolder() {
 
 loadfolder();
 
+/**
+ * 加载右侧内容
+ */
 function loadRight() {
 	mainRight.removeAllChild();
 	if (nowFile.fileType == 'folder') {
@@ -104,6 +113,7 @@ function loadRight() {
 
 			mainRight.appendChild(li);
 		}
+
 	} else {
 		let text = getFileContent(path.join(nowPath, nowFile.innerText));
 		let div = document.createElement('div');
@@ -113,6 +123,11 @@ function loadRight() {
 	}
 }
 
+/**
+ * 获取文件列表
+ * @param {string} url 文件夹路径
+ * @returns 文件夹列表{fileList, lightIndex, scroll}
+ */
 function getfileList(url) {
 	if (fileMap.get(url)) {
 		return fileMap.get(url);
@@ -120,6 +135,7 @@ function getfileList(url) {
 		let res = {
 			fileList: [],
 			lightIndex: 0,
+			scroll: 0,
 		};
 		let files = fs.readdirSync(url);
 		let arr = [];
@@ -180,6 +196,11 @@ function getfileList(url) {
 	}
 }
 
+/**
+ * 获取文件内容
+ * @param {string} url 文件路径
+ * @returns 文件内容
+ */
 function getFileContent(url) {
 	if (fileMap.get(url)) {
 		return fileMap.get(url);
@@ -208,30 +229,50 @@ function getFileContent(url) {
 	}
 }
 
+/**
+ * 
+ * @param {*} step 
+ */
+function changeNowFile(step) {
+	let afterIndex = nowFileList.lightIndex + step;
+	if (afterIndex > mainMiddle.children.length - 1) {
+		afterIndex = mainMiddle.children.length - 1;
+	} else if (afterIndex < 0) {
+		afterIndex = 0;
+	}
+	nowFile.removeClass('light');
+	nowFile = mainMiddle.children[afterIndex];
+	nowFileList.lightIndex = afterIndex;
+	nowFile.addClass('light');
+	headerNow.innerText = nowFile.innerText;
+	footerNumber.innerText = `${nowFile.index + 1}/${mainMiddle.children.length}`;
+
+	let listHeight = mainMiddle.children[0].offsetHeight;
+	let nowHeight = nowFileList.lightIndex * listHeight;
+	let boxStart = nowFileList.scroll;
+	let boxEnd = boxStart + mainMiddle.offsetHeight;
+	if (nowHeight < boxStart) {
+		nowFileList.scroll = nowHeight;
+	} else if (nowHeight + listHeight > boxEnd) {
+		nowFileList.scroll = nowHeight - mainMiddle.offsetHeight + listHeight;
+	}
+	mainMiddle.scrollTo(0, nowFileList.scroll);
+	loadRight();
+}
+
+// 键盘事件
 document.addEventListener('keydown', function (e) {
 	if (e.key == 'j') {
 		nowPath = path.join(nowPath, '..');
 		loadfolder();
 	} else if (e.key == 'i') {
-		if (nowFile.index != 0) {
-			nowFile.removeClass('light');
-			nowFile = mainMiddle.children[nowFile.index - 1];
-			nowFileList.lightIndex -= 1;
-			nowFile.addClass('light');
-			loadRight();
-			headerNow.innerText = nowFile.innerText;
-			footerNumber.innerText = `${nowFile.index + 1}/${mainMiddle.children.length}`;
-		}
+		changeNowFile(-1);
 	} else if (e.key == 'k') {
-		if (nowFile.index != mainMiddle.children.length - 1) {
-			nowFile.removeClass('light');
-			nowFile = mainMiddle.children[nowFile.index + 1];
-			nowFileList.lightIndex += 1;
-			nowFile.addClass('light');
-			loadRight();
-			headerNow.innerText = nowFile.innerText;
-			footerNumber.innerText = `${nowFile.index + 1}/${mainMiddle.children.length}`;
-		}
+		changeNowFile(1);
+	} else if (e.key == 'I') {
+		changeNowFile(-5);
+	} else if (e.key == 'K') {
+		changeNowFile(5);
 	} else if (e.key == 'l') {
 		if (nowFile.fileType != 'folder') {
 			cmd.run(path.join(nowPath, nowFile.innerText));
@@ -239,9 +280,11 @@ document.addEventListener('keydown', function (e) {
 			nowPath = path.join(nowPath, nowFile.innerText);
 			loadfolder();
 		}
-	} else if (e.ctrlKey && e.key == 's') {
+	} else if (e.key == 'q') {
 		process.chdir(nowPath);
 		ipcRenderer.send('close');
+	} else if (e.ctrlKey && e.key == 's') {
+		cmd.run(`cmder ${nowPath}`);
 	} else if (e.ctrlKey && e.key == 'c') {
 		setShearPlateData(nowPath);
 	}

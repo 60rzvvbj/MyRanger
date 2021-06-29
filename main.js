@@ -33,7 +33,7 @@ const createWindow = () => {
 
 	mainWindow.setTitle('myRanger');
 
-	// Open the DevTools.
+	// 是否启动时开启F12
 	// mainWindow.webContents.openDevTools();
 
 	ipcMain.on('close', function (e, data) {
