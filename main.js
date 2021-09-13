@@ -2,7 +2,7 @@ const {
 	app,
 	BrowserWindow,
 	Menu,
-	ipcMain
+	ipcMain,
 } = require('electron');
 const path = require('path');
 

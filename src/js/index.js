@@ -1,15 +1,20 @@
-let cmd = require('node-cmd');
-let fs = require('fs');
+let cmd = require('node-cmd'); // cmd包，用来运行命令
+let fs = require('fs'); // 文件包
 let {
-	ipcRenderer
-} = require('electron');
+	ipcRenderer,
+	shell
+} = require('electron'); // electron包
 const {
 	resolve
-} = require('path');
+} = require('path'); // 路径工具包
 let path = require('path');
+let windowsShortcuts = require('windows-shortcuts'); // 快捷方式工具包
 
 let nowPath = path.join(process.cwd());
-let fileMap = new Map();
+let fileMap = new Map(); // 路径文件列表map
+let pathRecord = new Stack(); // 历史记录栈
+pathRecord.push(nowPath); // 记录第一个路径
+
 let nowFileList;
 let nowFile;
 
@@ -182,7 +187,7 @@ function getfileList(url) {
 				if (status.isDirectory()) {
 					f.className = 'folder';
 				} else {
-					if (/.(exe|lnk)$/.test(f)) {
+					if (/.(exe|lnk)$/.test(f.content)) {
 						f.className = 'exe';
 					} else {
 						f.className = 'file';
@@ -260,32 +265,56 @@ function changeNowFile(step) {
 	loadRight();
 }
 
+/**
+ * 更改路径
+ */
+function changePath(newPath, notRecord) {
+	if (notRecord !== true) {
+		pathRecord.push(nowPath); // 记录上一次路径
+	}
+	nowPath = newPath;
+	loadfolder();
+}
+
 // 键盘事件
 document.addEventListener('keydown', function (e) {
-	if (e.key == 'j') {
-		nowPath = path.join(nowPath, '..');
-		loadfolder();
-	} else if (e.key == 'i') {
+	if (e.key == 'j') { // 返回上一级目录
+		changePath(path.join(nowPath, '..'));
+	} else if (e.key == 'i') { // 上
 		changeNowFile(-1);
-	} else if (e.key == 'k') {
+	} else if (e.key == 'k') { // 下
 		changeNowFile(1);
-	} else if (e.key == 'I') {
+	} else if (e.key == 'I') { // 上5次
 		changeNowFile(-5);
-	} else if (e.key == 'K') {
+	} else if (e.key == 'K') { // 下5次
 		changeNowFile(5);
-	} else if (e.key == 'l') {
-		if (nowFile.fileType != 'folder') {
-			cmd.run(path.join(nowPath, nowFile.innerText));
-		} else {
-			nowPath = path.join(nowPath, nowFile.innerText);
-			loadfolder();
+	} else if (e.key == 'l') { // 跳转到选择的目录或打开选择的文件
+		if (nowFile.fileType != 'folder') { // 如果不是目录
+			if (/.lnk$/.test(nowFile.innerText)) { // 判断是不是快捷方式
+				let lnk = shell.readShortcutLink(path.join(nowPath, nowFile.innerText));
+				let status = fs.statSync(lnk.target);
+				if (status.isDirectory()) { // 判断快捷方式是否指向目录
+					changePath(path.join(lnk.target)); // 跳转目录
+				} else { // 打开快捷方式
+					cmd.run(path.join(nowPath, nowFile.innerText));
+				}
+			} else { // 打开文件
+				cmd.run(path.join(nowPath, nowFile.innerText));
+			}
+		} else { // 如果是目录
+			changePath(path.join(nowPath, nowFile.innerText)); // 跳转目录
 		}
-	} else if (e.key == 'q') {
+	} else if (e.key == 'q') { // 退出程序
 		process.chdir(nowPath);
 		ipcRenderer.send('close');
-	} else if (e.ctrlKey && e.key == 's') {
+	} else if (e.ctrlKey && e.key == 's') { // 在当前目录打开cmder
 		cmd.run(`cmder ${nowPath}`);
-	} else if (e.ctrlKey && e.key == 'c') {
+	} else if (e.ctrlKey && e.key == 'c') { // 复制当前目录
 		setShearPlateData(nowPath);
+	} else if (e.key == 'b') {
+		let oldPath = pathRecord.pop();
+		if (oldPath != null) {
+			changePath(oldPath, true);
+		}
 	}
 });
