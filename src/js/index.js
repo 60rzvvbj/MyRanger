@@ -10,9 +10,45 @@ const {
 let path = require('path');
 let diskUitl = require('diskinfo');
 
+let dev = false; // 是否为开发阶段
+
+let programPath = __dirname;
+let configPath = path.join(programPath, '../../../../config/config.json');
+if (dev) {
+	configPath = path.join(programPath, '../config/config.json');
+}
+
+// 默认配置
+let config = {
+	"username": "60rzvvbj",
+	"keymap": {
+		"up": "i",
+		"down": "k",
+		"UP": "I",
+		"DOWN": "K",
+		"left": "j",
+		"right": "l",
+		"back": "b",
+		"quit": "q",
+		"OpenInWindows": ["ctrl", "w"],
+		"OpenInCmder": ["ctrl", "s"],
+		"CopyNowPath": ["ctrl", "c"]
+	}
+};
+
+// 请求配置文件
+ajax({
+	url: configPath,
+	success: function (res) {
+		Object.assign(config, res);
+		init(); // 初始化
+	},
+});
 
 let nowPath = path.join(process.cwd());
-// nowPath = 'C:\\Users\\Administrator\\Desktop'; // 测试
+if (dev) {
+	nowPath = 'C:\\Users\\Administrator\\Desktop'; // 测试
+}
 
 let fileMap = new Map(); // 路径文件列表map
 let pathRecord = new Stack(); // 历史记录栈
@@ -30,6 +66,7 @@ diskUitl.getDrives(function (err, drives) {
 let nowFileList; // 当前文件列表
 let nowFile; // 当前文件
 
+let headUsername = getDom('.header .username');
 let headerPath = getDom('.header .path');
 let headerNow = getDom('.header .now');
 
@@ -38,6 +75,7 @@ let mainMiddle = getDom('.main .middle');
 let mainRight = getDom('.main .right');
 
 let footerNumber = getDom('.footer .number');
+
 
 /**
  * 加载文件夹
@@ -174,7 +212,11 @@ function getfileList(url) {
 		if (url == '') {
 			files = [...driveLetters];
 		} else {
-			files = fs.readdirSync(url);
+			try {
+				files = fs.readdirSync(url);
+			} catch (e) {
+				files = [];
+			}
 		}
 		let arr = [];
 		for (file of files) {
@@ -311,9 +353,39 @@ function changePath(newPath, notRecord) {
 	loadfolder();
 }
 
+// 判断是否满足键盘事件
+function isKey(key, e) {
+	let keys = config.keymap[key];
+	if (keys instanceof Array) {
+		for (let k of keys) {
+			if (k == 'ctrl') {
+				if (!e.ctrlKey) {
+					return false;
+				}
+			} else if (k == 'alt') {
+				if (!e.altKey) {
+					return false;
+				}
+			} else if (k == 'shift') {
+				if (!e.shiftKey) {
+					return false;
+				}
+			} else {
+				if (e.key != k) {
+					return false;
+				}
+			}
+		}
+		return true;
+	} else if (typeof keys == 'string') {
+		return e.key == keys;
+	}
+	return false;
+}
+
 // 键盘事件
 document.addEventListener('keydown', function (e) {
-	if (e.key == 'j') { // 返回上一级目录
+	if (isKey('left', e)) { // 返回上一级目录
 		if (nowPath == '') {
 			// 什么也不做
 		} else if (driveLetters.includes(nowPath)) {
@@ -321,15 +393,15 @@ document.addEventListener('keydown', function (e) {
 		} else {
 			changePath(path.join(nowPath, '..'));
 		}
-	} else if (e.key == 'i') { // 上
+	} else if (isKey('up', e)) { // 上
 		changeNowFile(-1);
-	} else if (e.key == 'k') { // 下
+	} else if (isKey('down', e)) { // 下
 		changeNowFile(1);
-	} else if (e.key == 'I') { // 上5次
+	} else if (isKey('UP', e)) { // 上5次
 		changeNowFile(-5);
-	} else if (e.key == 'K') { // 下5次
+	} else if (isKey('DOWN', e)) { // 下5次
 		changeNowFile(5);
-	} else if (e.key == 'l') { // 跳转到选择的目录或打开选择的文件
+	} else if (isKey('right', e)) { // 跳转到选择的目录或打开选择的文件
 		if (nowFile.fileType != 'folder') { // 如果不是目录
 			if (/.lnk$/.test(nowFile.innerText)) { // 判断是不是快捷方式
 				let lnk = shell.readShortcutLink(path.join(nowPath, nowFile.innerText));
@@ -345,24 +417,46 @@ document.addEventListener('keydown', function (e) {
 		} else { // 如果是目录
 			changePath(path.join(nowPath, nowFile.innerText)); // 跳转目录
 		}
-	} else if (e.key == 'q') { // 退出程序
+	} else if (isKey('quit', e)) { // 退出程序
 		ipcRenderer.send('close');
-	} else if (e.ctrlKey && e.key == 's') { // 在当前目录打开cmder
+	} else if (isKey('OpenInCmder', e)) { // 在当前目录打开cmder
 		cmd.run("cmder \"" + nowPath + "\"");
 		setTimeout(() => {
 			ipcRenderer.send('close');
 		}, delay);
-	} else if (e.ctrlKey && e.key == 'w') { // 在当前目录打开windows文件资源管理器
+	} else if (isKey('OpenInWindows', e)) { // 在当前目录打开windows文件资源管理器
 		cmd.run("start \"\" \"" + nowPath + "\"");
 		setTimeout(() => {
 			ipcRenderer.send('close');
 		}, delay);
-	} else if (e.ctrlKey && e.key == 'c') { // 复制当前目录
+	} else if (isKey('CopyNowPath', e)) { // 复制当前目录
 		setShearPlateData(nowPath);
-	} else if (e.key == 'b') {
+	} else if (isKey('back', e)) {
 		let oldPath = pathRecord.pop();
 		if (oldPath != null) {
 			changePath(oldPath, true);
 		}
 	}
 });
+
+// 初始化
+function init() {
+	headUsername.innerText = config.username;
+
+	// 验证键盘配置
+	let keymap = new Object(config.keymap);
+	for (let key in keymap) {
+		let keys = keymap[key];
+		if (keys instanceof Array) {
+			for (let k of keys) {
+				if (typeof k != 'string') {
+					alert('config error');
+				}
+			}
+		} else if (typeof keys == 'string') {
+		} else {
+			alert('config error');
+		}
+		return false;
+	}
+}
