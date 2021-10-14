@@ -46,6 +46,7 @@
 	},
 	"dependencies": {
 		"child_process": "^1.0.2",
+		"diskinfo": "0.0.3",
 		"electron-squirrel-startup": "^1.0.0",
 		"node-cmd": "^4.0.0",
 		"windows-shortcuts": "^0.1.6"

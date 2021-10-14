@@ -1,7 +1,7 @@
 * {
 	padding: 0;
 	margin: 0;
-	font-family: Consolas, 'Courier New', monospace;
+	font-family: Consolas, "Courier New", monospace;
 }
 
 input {
@@ -27,7 +27,7 @@ body {
 	overflow: hidden;
 }
 
-.header>div {
+.header > div {
 	float: left;
 	font-size: 22px;
 	line-height: 4vh;
@@ -39,6 +39,8 @@ body {
 }
 
 .header .path {
+	min-width: 1em;
+	height: 100%;
 	text-indent: 1em;
 	color: #5096cd;
 }
@@ -52,16 +54,16 @@ body {
 	height: 92vh;
 }
 
-.main>ul {
+.main > ul {
 	overflow: hidden;
 	overflow-y: scroll;
 }
 
-.main>ul::-webkit-scrollbar {
+.main > ul::-webkit-scrollbar {
 	display: none;
 }
 
-.main>ul li {
+.main > ul li {
 	width: 100%;
 	height: 24px;
 	font-size: 20px;
@@ -72,19 +74,19 @@ body {
 	overflow: hidden;
 }
 
-.main>ul .folder {
+.main > ul .folder {
 	color: #5096cd;
 }
 
-.main>ul .exe {
+.main > ul .exe {
 	color: #e3b4b8;
 }
 
-.main>ul .file {
+.main > ul .file {
 	color: #8abcd1;
 }
 
-.main>ul .light {
+.main > ul .light {
 	color: #eee;
 	background-color: #095aa1;
 }
