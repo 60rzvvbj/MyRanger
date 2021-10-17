@@ -90,7 +90,7 @@ function loadfolder() {
 	let getListPath;
 	if (nowPath == '') {
 	} else if (driveLetters.includes(nowPath)) {
-		getListPath = path.join('');
+		getListPath = '';
 	} else {
 		getListPath = path.join(nowPath, '..');
 	}

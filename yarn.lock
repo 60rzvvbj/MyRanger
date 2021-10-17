@@ -636,6 +636,11 @@ chardet@^0.7.0:
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
+child_process@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.npm.taobao.org/child_process/download/child_process-1.0.2.tgz#b1f7e7fc73d25e7fd1d455adc94e143830182b5a"
+  integrity sha1-sffn/HPSXn/R1FWtyU4UODAYK1o=
+
 chownr@^1.1.1:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.1.4.tgz#6fc9d7b42d32a583596337666e7d08084da2cc6b"
@@ -922,6 +927,11 @@ detect-node@^2.0.4:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.1.0.tgz#c9c70775a49c3d03bc2c06d9a73be550f978f8b1"
   integrity sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==
+
+diskinfo@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.nlark.com/diskinfo/download/diskinfo-0.0.3.tgz#0d41030f09d33b5c975910bc9ab2fd4d98f62bf0"
+  integrity sha1-DUEDDwnTO1yXWRC8mrL9TZj2K/A=
 
 duplexer3@^0.1.4:
   version "0.1.4"
@@ -2120,6 +2130,11 @@ node-addon-api@^1.6.0:
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-1.7.2.tgz#3df30b95720b53c24e59948b49532b662444f54d"
   integrity sha512-ibPK3iA+vaY1eEjESkQkM0BbCqFOaZMiXRTtdB0u7b4djtY6JnsjvPdUHVMg6xQt3B8fpTTWHI9A+ADjM9frzg==
+
+node-cmd@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.nlark.com/node-cmd/download/node-cmd-4.0.0.tgz#a0187d9b779b59f1e8a70545ab8e8276a4b8c693"
+  integrity sha1-oBh9m3ebWfHopwVFq46CdqS4xpM=
 
 node-fetch@^2.6.0:
   version "2.6.1"
@@ -3353,6 +3368,11 @@ wide-align@^1.1.0:
   integrity sha512-QGkOQc8XL6Bt5PwnsExKBPuMKBxnGxWWW3fU55Xt4feHozMUhdUMaBCk290qpm/wG5u/RSKzwdAC4i51YigihA==
   dependencies:
     string-width "^1.0.2 || 2"
+
+windows-shortcuts@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.nlark.com/windows-shortcuts/download/windows-shortcuts-0.1.6.tgz#27970c5c346ffd81821c3e12528c0babca0a5a99"
+  integrity sha1-J5cMXDRv/YGCHD4SUowLq8oKWpk=
 
 word-wrap@^1.2.3:
   version "1.2.3"
