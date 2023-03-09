@@ -1,0 +1,16 @@
+{
+  "username": "60rzvvbj",
+  "keymap": {
+    "up": "k",
+    "down": "j",
+    "UP": "K",
+    "DOWN": "J",
+    "left": "h",
+    "right": "l",
+    "back": "b",
+    "quit": "q",
+    "OpenInWindows": ["ctrl", "w"],
+    "OpenInCmder": ["ctrl", "s"],
+    "CopyNowPath": ["ctrl", "c"]
+  }
+}
